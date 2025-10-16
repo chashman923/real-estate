@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Luxury Estates | Premium Properties</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#1a365d",
+              secondary: "#d4af37",
+              accent: "#2d3748",
+            },
+            fontFamily: {
+              montserrat: ["Montserrat", "sans-serif"],
+              playfair: ["Playfair Display", "serif"],
+            },
+            animation: {
+              "fade-in": "fadeIn 0.8s ease-in-out",
+              "slide-up": "slideUp 0.8s ease-out",
+              "zoom-in": "zoomIn 0.5s ease-out",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              slideUp: {
+                "0%": { transform: "translateY(20px)", opacity: "0" },
+                "100%": { transform: "translateY(0)", opacity: "1" },
+              },
+              zoomIn: {
+                "0%": { transform: "scale(0.95)", opacity: "0" },
+                "100%": { transform: "scale(1)", opacity: "1" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .property-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+      .gradient-overlay {
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+      }
+      .hero-bg {
+        background-image: linear-gradient(
+            rgba(26, 54, 93, 0.8),
+            rgba(26, 54, 93, 0.8)
+          ),
+          url("https://images.unsplash.com/photo-1600585154340-6f67677b3759?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
+        background-size: cover;
+        background-position: center;
+      }
+      .filter-btn.active {
+        background-color: #1a365d;
+        color: white;
+      }
+      .gallery-item {
+        transition: all 0.3s ease;
+      }
+      .gallery-item:hover {
+        transform: scale(1.05);
+      }
+      .mobile-menu {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+      .mobile-menu.open {
+        transform: translateX(0);
+      }
+      .popup-overlay {
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .popup-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      .popup-content {
+        transform: scale(0.9);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+      .popup-content.active {
+        transform: scale(1);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body class="font-montserrat bg-gray-50">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+      <div
+        class="container mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <div class="flex items-center">
+          <h1 class="text-2xl font-bold text-primary font-playfair">
+            Luxury<span class="text-secondary">Estates</span>
+          </h1>
+        </div>
+
+        <nav class="hidden md:flex space-x-8">
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors"
+            >Home</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors"
+            >Properties</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors"
+            >Agents</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors"
+            >About</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors"
+            >Contact</a
+          >
+        </nav>
+
+        <div class="flex items-center space-x-4">
+          <button
+            id="signInBtn"
+            class="hidden md:block bg-primary text-white px-6 py-2 rounded-md hover:bg-accent transition-colors"
+          >
+            Sign In
+          </button>
+          <button
+            class="bg-secondary text-white px-6 py-2 rounded-md hover:bg-yellow-600 transition-colors"
+          >
+            List Property
+          </button>
+          <button id="mobileMenuBtn" class="md:hidden text-primary">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobileMenu"
+        class="mobile-menu fixed inset-0 z-50 bg-white md:hidden"
+      >
+        <div class="flex justify-between items-center p-4 border-b">
+          <h2 class="text-xl font-bold text-primary font-playfair">
+            Luxury<span class="text-secondary">Estates</span>
+          </h2>
+          <button id="closeMenuBtn" class="text-primary">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <nav class="flex flex-col p-4 space-y-4">
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors py-2 border-b"
+            >Home</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors py-2 border-b"
+            >Properties</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors py-2 border-b"
+            >Agents</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors py-2 border-b"
+            >About</a
+          >
+          <a
+            href="#"
+            class="text-accent hover:text-primary font-medium transition-colors py-2 border-b"
+            >Contact</a
+          >
+          <button
+            id="mobileSignInBtn"
+            class="bg-primary text-white px-6 py-2 rounded-md hover:bg-accent transition-colors mt-4"
+          >
+            Sign In
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Sign In Popup -->
+    <div
+      id="signInPopup"
+      class="popup-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+    >
+      <div
+        class="popup-content bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
+      >
+        <div class="flex justify-between items-center p-6 border-b">
+          <h2 class="text-2xl font-bold text-primary font-playfair">Sign In</h2>
+          <button id="closePopupBtn" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="p-6">
+          <form class="space-y-4">
+            <div>
+              <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Email Address</label
+              >
+              <input
+                type="email"
+                id="email"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="your@email.com"
+              />
+            </div>
+            <div>
+              <label
+                for="password"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Password</label
+              >
+              <input
+                type="password"
+                id="password"
+                class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="••••••••"
+              />
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                />
+                <label for="remember" class="ml-2 block text-sm text-gray-700"
+                  >Remember me</label
+                >
+              </div>
+              <a href="#" class="text-sm text-primary hover:underline"
+                >Forgot password?</a
+              >
+            </div>
+            <button
+              type="submit"
+              class="w-full bg-primary text-white py-3 rounded-md hover:bg-accent transition-colors font-medium"
+            >
+              Sign In
+            </button>
+          </form>
+          <div class="mt-6 text-center">
+            <p class="text-gray-600">
+              Don't have an account?
+              <a href="#" class="text-primary hover:underline font-medium"
+                >Sign up</a
+              >
+            </p>
+          </div>
+          <div class="mt-6">
+            <div class="relative">
+              <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+              </div>
+              <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500"
+                  >Or continue with</span
+                >
+              </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <button
+                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fab fa-google text-red-500"></i>
+                <span class="ml-2">Google</span>
+              </button>
+              <button
+                class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <i class="fab fa-facebook-f text-blue-600"></i>
+                <span class="ml-2">Facebook</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-24 md:py-32">
+      <div class="container mx-auto px-4 text-center animate-fade-in">
+        <h1
+          class="text-4xl md:text-6xl font-bold font-playfair mb-6 animate-slide-up"
+        >
+          Find Your Dream <span class="text-secondary">Home</span>
+        </h1>
+        <p class="text-xl md:text-2xl max-w-2xl mx-auto mb-10 animate-slide-up">
+          Discover the perfect property that matches your lifestyle and
+          aspirations
+        </p>
+
+        <div
+          class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-4 md:p-6 animate-zoom-in"
+        >
+          <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+              <select
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700"
+              >
+                <option>Property Type</option>
+                <option>House</option>
+                <option>Apartment</option>
+                <option>Villa</option>
+                <option>Commercial</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <select
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700"
+              >
+                <option>Location</option>
+                <option>New York</option>
+                <option>Los Angeles</option>
+                <option>Chicago</option>
+                <option>Miami</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <select
+                class="w-full p-3 border border-gray-300 rounded-md text-gray-700"
+              >
+                <option>Price Range</option>
+                <option>$100,000 - $300,000</option>
+                <option>$300,000 - $500,000</option>
+                <option>$500,000 - $1,000,000</option>
+                <option>$1,000,000+</option>
+              </select>
+            </div>
+            <div>
+              <button
+                class="bg-primary hover:bg-accent text-white p-3 rounded-md w-full md:w-auto transition-colors"
+              >
+                <i class="fas fa-search mr-2"></i> Search
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Properties -->
+    <section class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2
+            class="text-3xl md:text-4xl font-bold text-primary font-playfair mb-4"
+          >
+            Featured Properties
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Explore our handpicked selection of premium properties in prime
+            locations
+          </p>
+        </div>
+
+        <!-- Property Filters -->
+        <div class="flex flex-wrap justify-center gap-4 mb-10">
+          <button
+            class="filter-btn active px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition-colors"
+          >
+            All
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition-colors"
+          >
+            For Sale
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition-colors"
+          >
+            For Rent
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition-colors"
+          >
+            Luxury
+          </button>
+          <button
+            class="filter-btn px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-primary hover:text-white transition-colors"
+          >
+            Commercial
+          </button>
+        </div>
+
+        <!-- Property Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Property Card 1 -->
+          <div
+            class="property-card bg-white rounded-xl shadow-md overflow-hidden animate-fade-in"
+          >
+            <div class="relative">
+              <img
+                src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
+                alt="Modern Villa"
+                class="w-full h-64 object-cover"
+              />
+              <div
+                class="absolute top-4 right-4 bg-secondary text-white px-3 py-1 rounded-md font-semibold"
+              >
+                For Sale
+              </div>
+              <div
+                class="absolute bottom-0 left-0 right-0 gradient-overlay p-4 text-white"
+              >
+                <div class="flex justify-between items-center">
+                  <span
+                    class="bg-primary bg-opacity-80 px-2 py-1 rounded text-sm"
+                    >Featured</span
+                  >
+                  <div class="flex space-x-2">
+                    <button
+                      class="bg-white bg-opacity-20 p-2 rounded-full hover:bg-opacity-30 transition-colors"
+                    >
+                      <i class="far fa-heart"></i>
+                    </button>
+                    <button
+                      class="bg-white bg-opacity-20 p-2 rounded-full hover:bg-opacity-30 transition-colors"
+                    >
+                      <i class="fas fa-share-alt"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-primary mb-2">
+                Modern Luxury Villa
+              </h3>
+              <p class="text-gray-600 mb-4 flex items-center">
+                <i class="fas fa-map-marker-alt text-secondary mr-2"></i>
+                Beverly Hills, Los Angeles
+              </p>
+              <div class="flex justify-between text-gray-700 mb-4">
+                <div class="flex items-center">
+                  <i class="fas fa-bed text-secondary mr-2"></i>
+                  <span>4 Beds</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-bath text-secondary mr-2"></i>
+                  <span>3 Baths</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-vector-square text-secondary mr-2"></i>
+                  <span>3200 sqft</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-primary">$1,250,000</span>
+                <button
+                  class="bg-primary text-white px-4 py-2 rounded-md hover:bg-accent transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Property Card 2 -->
+          <div
+            class="property-card bg-white rounded-xl shadow-md overflow-hidden animate-fade-in"
+          >
+            <div class="relative">
+              <img
+                src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Contemporary House"
+                class="w-full h-64 object-cover"
+              />
+              <div
+                class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-md font-semibold"
+              >
+                For Rent
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-primary mb-2">
+                Contemporary Family Home
+              </h3>
+              <p class="text-gray-600 mb-4 flex items-center">
+                <i class="fas fa-map-marker-alt text-secondary mr-2"></i>
+                Upper East Side, New York
+              </p>
+              <div class="flex justify-between text-gray-700 mb-4">
+                <div class="flex items-center">
+                  <i class="fas fa-bed text-secondary mr-2"></i>
+                  <span>3 Beds</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-bath text-secondary mr-2"></i>
+                  <span>2 Baths</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-vector-square text-secondary mr-2"></i>
+                  <span>2200 sqft</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-primary">$4,500/mo</span>
+                <button
+                  class="bg-primary text-white px-4 py-2 rounded-md hover:bg-accent transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Property Card 3 -->
+          <div
+            class="property-card bg-white rounded-xl shadow-md overflow-hidden animate-fade-in"
+          >
+            <div class="relative">
+              <img
+                src="https://images.unsplash.com/photo-1605146769289-440113cc3d00?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                alt="Penthouse Apartment"
+                class="w-full h-64 object-cover"
+              />
+              <div
+                class="absolute top-4 right-4 bg-secondary text-white px-3 py-1 rounded-md font-semibold"
+              >
+                For Sale
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-primary mb-2">
+                Luxury Penthouse Suite
+              </h3>
+              <p class="text-gray-600 mb-4 flex items-center">
+                <i class="fas fa-map-marker-alt text-secondary mr-2"></i>
+                Downtown, Miami
+              </p>
+              <div class="flex justify-between text-gray-700 mb-4">
+                <div class="flex items-center">
+                  <i class="fas fa-bed text-secondary mr-2"></i>
+                  <span>2 Beds</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-bath text-secondary mr-2"></i>
+                  <span>2 Baths</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-vector-square text-secondary mr-2"></i>
+                  <span>1800 sqft</span>
+                </div>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-2xl font-bold text-primary">$850,000</span>
+                <button
+                  class="bg-primary text-white px-4 py-2 rounded-md hover:bg-accent transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <button
+            class="bg-primary text-white px-8 py-3 rounded-md hover:bg-accent transition-colors font-medium"
+          >
+            View All Properties
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Gallery -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2
+            class="text-3xl md:text-4xl font-bold text-primary font-playfair mb-4"
+          >
+            Property Gallery
+          </h2>
+          <p class="text-gray-600 max-w-2xl mx-auto">
+            Take a visual journey through our exclusive property portfolio
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="gallery-item col-span-2 row-span-2">
+            <img
+              src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2053&q=80"
+              alt="Luxury Living Room"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              alt="Modern Kitchen"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              alt="Luxury Bedroom"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              alt="Elegant Bathroom"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+          <div class="gallery-item">
+            <img
+              src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+              alt="Swimming Pool"
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-primary text-white">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold font-playfair mb-6">
+          Ready to Find Your Dream Home?
+        </h2>
+        <p class="text-xl max-w-2xl mx-auto mb-10">
+          Join thousands of satisfied clients who found their perfect property
+          with us
+        </p>
+        <div class="flex flex-col md:flex-row justify-center gap-4">
+          <button
+            class="bg-secondary text-white px-8 py-3 rounded-md hover:bg-yellow-600 transition-colors font-medium"
+          >
+            Browse Properties
+          </button>
+          <button
+            class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-md hover:bg-white hover:text-primary transition-colors font-medium"
+          >
+            Contact Agent
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-accent text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-2xl font-bold font-playfair mb-4">
+              Luxury<span class="text-secondary">Estates</span>
+            </h3>
+            <p class="text-gray-300 mb-4">
+              Your trusted partner in finding premium properties worldwide.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <i class="fab fa-twitter"></i>
+              </a>
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a
+                href="#"
+                class="text-gray-300 hover:text-white transition-colors"
+              >
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Properties</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Agents</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >About Us</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Property Types</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Houses</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Apartments</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Villas</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Commercial</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-gray-300 hover:text-white transition-colors"
+                  >Luxury</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Contact Info</h4>
+            <ul class="space-y-2">
+              <li class="flex items-center">
+                <i class="fas fa-map-marker-alt text-secondary mr-3"></i>
+                <span class="text-gray-300">123 Estate Ave, New York, NY</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-phone text-secondary mr-3"></i>
+                <span class="text-gray-300">+1 (555) 123-4567</span>
+              </li>
+              <li class="flex items-center">
+                <i class="fas fa-envelope text-secondary mr-3"></i>
+                <span class="text-gray-300">info@luxuryestates.com</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-400"
+        >
+          <p>&copy; 2023 LuxuryEstates. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile Menu Functionality
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const closeMenuBtn = document.getElementById("closeMenuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
+
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.add("open");
+      });
+
+      closeMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.remove("open");
+      });
+
+      // Close mobile menu when clicking on a link
+      const mobileMenuLinks = mobileMenu.querySelectorAll("a");
+      mobileMenuLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.remove("open");
+        });
+      });
+
+      // Sign In Popup Functionality
+      const signInBtn = document.getElementById("signInBtn");
+      const mobileSignInBtn = document.getElementById("mobileSignInBtn");
+      const closePopupBtn = document.getElementById("closePopupBtn");
+      const signInPopup = document.getElementById("signInPopup");
+      const popupOverlay = signInPopup;
+      const popupContent = signInPopup.querySelector(".popup-content");
+
+      function openSignInPopup() {
+        popupOverlay.classList.add("active");
+        popupContent.classList.add("active");
+        // Close mobile menu if open
+        mobileMenu.classList.remove("open");
+      }
+
+      function closeSignInPopup() {
+        popupOverlay.classList.remove("active");
+        popupContent.classList.remove("active");
+      }
+
+      signInBtn.addEventListener("click", openSignInPopup);
+      mobileSignInBtn.addEventListener("click", openSignInPopup);
+      closePopupBtn.addEventListener("click", closeSignInPopup);
+
+      // Close popup when clicking outside the content
+      popupOverlay.addEventListener("click", (e) => {
+        if (e.target === popupOverlay) {
+          closeSignInPopup();
+        }
+      });
+
+      // Close popup with Escape key
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && popupOverlay.classList.contains("active")) {
+          closeSignInPopup();
+        }
+      });
+
+      // Filter buttons functionality
+      document.querySelectorAll(".filter-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+          this.classList.add("active");
+        });
+      });
+
+      // Property card hover effects
+      document.querySelectorAll(".property-card").forEach((card) => {
+        card.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-10px)";
+          this.style.boxShadow = "0 20px 40px rgba(0,0,0,0.15)";
+        });
+
+        card.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0)";
+          this.style.boxShadow = "";
+        });
+      });
+
+      // Gallery item hover effects
+      document.querySelectorAll(".gallery-item").forEach((item) => {
+        item.addEventListener("mouseenter", function () {
+          this.style.transform = "scale(1.05)";
+        });
+
+        item.addEventListener("mouseleave", function () {
+          this.style.transform = "scale(1)";
+        });
+      });
+    </script>
+  </body>
+</html>
